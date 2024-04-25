@@ -1,3 +1,4 @@
+console.log("START");
 const express = require('express');
 const jwt = require('jsonwebtoken');
 const session = require('express-session')
