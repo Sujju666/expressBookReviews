@@ -32,50 +32,79 @@ public_users.post("/register", (req, res) => {
 
 // Get the book list available in the shop
 public_users.get('/', function (req, res) {
-
-    return res.status(200).json({ books });
+    const promise = new Promise((resolve, reject) => {
+        setTimeout(() => {
+            resolve(books)
+        }, 777);
+    });
+    promise
+    .then(result => {
+        return res.status(200).json({ result });
+    })   
 });
 
 // Get book details based on ISBN
-public_users.get('/isbn/:isbn', function (req, res) {
+public_users.get('/isbn/:isbn', async function (req, res) {
 
     const isbn = req.params.isbn;
-    const booksKeyArr = Object.keys(books);
+    const promise = new Promise((resolve, reject) => {
+        setTimeout(() => {
+            resolve(books[req.params.isbn])
+        }, 777);
+    });
 
-    if (booksKeyArr.includes(isbn)) {
-        return res.status(200).json({ data: books[isbn] });
-    }
-    return res.status(404).json({ message: "Data not found" });
+    promise
+    .then((result) => {
+        return res.status(200).json({data : result});
+    })
+    .catch((err) => {
+        return res.status(404).json({message : "Data not found."});
+    })
+
 });
 
 // Get book details based on author
-public_users.get('/author/:author', function (req, res) {
+public_users.get('/author/:author', async function (req, res) {
 
     const author = req.params.author;
-    const booksKeyArr = Object.keys(books);
+    const promise = new Promise((resolve, reject) => {
+        setTimeout(() => {
+            const data = Object.values(books).filter(
+                b => b.author == author
+            );
+            resolve(data);
+        }, 777);
+    });
 
-    for (const isbn of booksKeyArr) {
-        if (books[isbn].author === author) {
-            return res.status(200).json({ data: books[isbn] });
-        }
-    }
-
-    return res.status(404).json({ message: "Data not found" });
+    promise
+    .then(result => {
+        return res.status(200).json({ data : result });
+    })
+    .catch(err => {
+        return res.status(404).json({ message: "Data not found" });
+    });
 });
 
 // Get all books based on title
-public_users.get('/title/:title', function (req, res) {
+public_users.get('/title/:title', async function (req, res) {
 
     const title = req.params.title;
-    const booksKeyArr = Object.keys(books);
-
-    for (const isbn of booksKeyArr) {
-        if (books[isbn].title === title) {
-            return res.status(200).json({ data: books[isbn] });
-        }
-    }
-
-    return res.status(404).json({ message: "Data not found" });
+    const promise = new Promise( (resolve, reject) => {
+        setTimeout(() => {
+            const data = Object.values(books).filter(
+                b => b.title == title
+            );
+            resolve(data);
+        }, 777);
+    });
+    
+    promise
+    .then(result => {
+        return res.status(200).json({ data: result });
+    })
+    .catch(err => {
+        return res.status(404).json({ message: "Data not found" });
+    });
 });
 
 //  Get book review
